@@ -1,1 +1,1 @@
-# 2026-capstone
+# The EEG capstone
