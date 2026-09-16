@@ -1,18 +1,18 @@
 """
 Perform preprocessing similar to prior capstone projects.
-
-1. Resample data
-2. Perform contralateral referencing
-- https://mne.tools/stable/auto_examples/preprocessing/contralateral_referencing.html
-3. Band-pass 0.2hz, 60hz
 """
 
 import mne
 from mne.io import Raw
 
 
-def preprocess(raw: Raw):
-
+def preprocess_eeg(raw: Raw):
+    """
+    1. Resample data
+    2. Perform contralateral referencing
+    - https://mne.tools/stable/auto_examples/preprocessing/contralateral_referencing.html
+    3. Band-pass 0.2hz, 60hz
+    """
     # this splits electrodes into 3 groups; left, midline, and right
     ch_names = mne.channels.make_1020_channel_selections(raw.info, return_ch_names=True)
 
