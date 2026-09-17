@@ -9,11 +9,11 @@ from pathlib import Path
 from mne.io import Raw
 from mne_bids import BIDSPath, get_entity_vals, read_raw_bids
 
-from sandbox.const import datapath
+from sandbox.config import DATA_PATH
 
 
 def LoadHassall2026(
-    filepath: Path = datapath / "2026_EEG_PassiveMusicListening_Hassall",
+    filepath: Path = DATA_PATH / "2026_EEG_PassiveMusicListening_Hassall",
 ) -> list[Raw]:
     """
     Load passive listening EEG data provided by Cameron Hassall, 2026
