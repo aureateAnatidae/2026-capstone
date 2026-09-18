@@ -1,7 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
-from mne import make_fixed_length_epochs
 
+from sandbox.config import PLOT
 from sandbox.load_data import LoadHassall2026
 from sandbox.preprocess import contralateral_rereferencing, repair_artifacts
 
@@ -22,16 +22,14 @@ def main():
         repair_reref_raw = repair_artifacts(reref_raw)
 
         filt_repair_reref_raw = repair_reref_raw.copy().filter(
-            l_freq=0.2, h_freq=None, picks="eeg"
+            l_freq=0.1, h_freq=30, picks="eeg"
         )
 
-        epochs = make_fixed_length_epochs(
-            filt_repair_reref_raw, duration=epoch_length_s, preload=True
-        )
-        epochs.drop_bad(reject={"eeg": 950e-6})
+        X_raw = filt_repair_reref_raw.copy().pick("eeg").apply_baseline((None, None))
+        y_raw = filt_repair_reref_raw.copy().pick("Audio")
 
-        X_raw = epochs.copy().pick("eeg").apply_baseline((None, None))
-        y_raw = epochs.copy().pick("Audio")
+        if PLOT:
+            pass  # TODO: Plot before and after
 
         X = X_raw.get_data()
         y = y_raw.get_data()
