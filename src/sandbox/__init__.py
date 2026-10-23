@@ -3,30 +3,27 @@ from matplotlib import pyplot as plt
 
 from sandbox.config import PLOT
 from sandbox.load_data import LoadHassall2026
+from sandbox.load_data import LoadMUSIN_G
 from sandbox.preprocess import contralateral_rereferencing, repair_artifacts
 
-downsample_sfreq = 500
-epoch_length_s = 2
+downsample_sfreq = 250
+# epoch_length_s = 2
 
 
 # TODO: Remove sections without music
 def main():
-    raws = LoadHassall2026()
+    raws = LoadMUSIN_G()
     X_all, y_all, groups_all = [], [], []
 
     for i, raw in enumerate(raws):
         raw.resample(sfreq=downsample_sfreq)
 
-        reref_raw = contralateral_rereferencing(raw)
-
-        repair_reref_raw = repair_artifacts(reref_raw)
-
-        filt_repair_reref_raw = repair_reref_raw.copy().filter(
+        filt_raw = raw.copy().filter(
             l_freq=0.1, h_freq=30, picks="eeg"
         )
 
-        X_raw = filt_repair_reref_raw.copy().pick("eeg").apply_baseline((None, None))
-        y_raw = filt_repair_reref_raw.copy().pick("Audio")
+        X_raw = filt_raw.copy().pick("eeg")
+        y_raw = filt_raw.copy().pick("Audio")
 
         if PLOT:
             pass  # TODO: Plot before and after
