@@ -12,3 +12,6 @@ wheels/
 # Data
 data/*
 !data/README.md
+
+# Notebook checkpoints
+.ipynb_checkpoints
