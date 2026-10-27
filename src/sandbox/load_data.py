@@ -107,53 +107,46 @@ def match_song(subject, session, task, extension, run, suffix, root):
     # yield song_len
 
 
+SONG_NAMES = {
+    1: "Trip to the lonely planet",
+    2: "Sail",
+    3: "Concept 15",
+    4: "Aurore",
+    5: "Proof",
+    6: "Glider",
+    7: "Raag Bihag",
+    8: "Albela sajan",
+    9: "Mor Bani thanghat Kare",
+    10: "Fallin",
+    11: "Master of Running",
+    12: "JB",
+}
+
+
 def LoadMUSIN_G(
     filepath: Path = DATA_PATH / "ds003774-download",
-) -> list[Raw]:
+    subject_slice: slice = slice(1, 5),
+) -> pd.DataFrame:
     """
     Load data from https://openneuro.org/datasets/ds003774/versions/1.0.2
 
-    Find the event markers from the event .tsv file
-    Select EEG from the start of the song to the end of the song
-
-    A subject's .tsv file contains all start and end markers for each song.
+    Returns one row per recording (one song for one participant), with columns:
+        subject, session, run, song_num, song_name, sfreq, n_times, duration_s,
+        wav_path, bids_path, raw
 
     Note:
         - for 11 participants, the sampling rate of EEG is 1000Hz, for the remaining 9, 250Hz.
-        - none of the sessions are labelled with the song, but we do have the length of the session and the length of the song
-            - yes, we match the song to the session by their length
-            - lengths of the songs are included in an unformatted text file, which has been interpreted in the function
-                `match_song()`
+          Use the `sfreq` column to tell them apart.
+        - the 1st session corresponds to song 1 (the README says each session is a song number).
+        - `subject_slice` picks which participants to load.
     """
-    subjects = get_entity_vals(filepath, "subject")
+    subjects = get_entity_vals(filepath, "subject")[subject_slice]
     sessions = get_entity_vals(filepath, "session")
-
     task = get_entity_vals(filepath, "task")[0]
-    datatype = "eeg"
 
-    songs = {
-        1: "Trip to the lonely planet",
-        2: "Sail",
-        3: "Concept 15",
-        4: "Aurore",
-        5: "Proof",
-        6: "Glider",
-        7: "Raag Bihag",
-        8: "Albela sajan",
-        9: "Mor Bani thanghat Kare",
-        10: "Fallin",
-        11: "Master of Running",
-        12: "JB",
-    }
-
-    raws = []
-    for sub in subjects[1:5]:
-        runs = get_entity_vals(root=filepath / f"sub-{sub}", entity_key="run")
-
-        songs = match_song(sub, "01", task, ".tsv", "1", "events", filepath)
-
+    rows = []
+    for sub in subjects:
         for ses in sessions:
-            # The 1st session corresponds to the 1st run, which corresponds to the 1st instance of 'stm+' and 'fxnd' in the .tsv
             paths = find_matching_paths(
                 subjects=sub,
                 sessions=ses,
@@ -164,15 +157,29 @@ def LoadMUSIN_G(
             )
             song_num = int(ses)
             song_file = filepath / "Code" / "ESongs" / f"{song_num}.esh.wav"
-            
 
             for path in paths:
                 raw = read_raw_bids(path)
                 add_wav_as_misc(raw, song_file)
                 raw.load_data()
-                raws.append(raw)
 
-    return raws
+                rows.append(
+                    {
+                        "subject": sub,
+                        "session": ses,
+                        "run": path.run,
+                        "song_num": song_num,
+                        "song_name": SONG_NAMES[song_num],
+                        "sfreq": raw.info["sfreq"],
+                        "n_times": raw.n_times,
+                        "duration_s": raw.n_times / raw.info["sfreq"],
+                        "wav_path": song_file,
+                        "bids_path": path,
+                        "raw": raw,
+                    }
+                )
+
+    return pd.DataFrame(rows)
 
 
 if __name__ == "__main__":
