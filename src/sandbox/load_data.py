@@ -10,38 +10,11 @@ from pathlib import Path
 import mne
 import numpy as np
 import pandas as pd
-from mne.io import Raw
 from mne_bids import BIDSPath, find_matching_paths, get_entity_vals, read_raw_bids
 from scipy.io import wavfile
 from scipy.signal import resample_poly
 
 from sandbox.config import DATA_PATH
-
-
-def LoadHassall2026(
-    filepath: Path = DATA_PATH / "2026_EEG_PassiveMusicListening_Hassall",
-) -> list[Raw]:
-    """
-    Load passive listening EEG data provided by Cameron Hassall, 2026
-    """
-    subjects = get_entity_vals(filepath, "subject")
-    task = get_entity_vals(filepath, "task")[0]
-    datatype = "eeg"
-
-    raws = []
-    for s in subjects:
-        raw = read_raw_bids(
-            BIDSPath(
-                subject=s, task=task, root=filepath, datatype=datatype, suffix="eeg"
-            )
-        )
-        # Channels were not labelled with channel types
-        raw.set_channel_types({channel: "eeg" for channel in raw.ch_names})
-        raw.set_channel_types({"Audio": "misc"})
-        raw.load_data()
-        raws.append(raw)
-
-    return raws
 
 
 def add_wav_as_misc(raw, wav_path, ch_name="Audio", mono="mean", offset=10.0):
@@ -160,7 +133,6 @@ def LoadMUSIN_G(
 
             for path in paths:
                 raw = read_raw_bids(path)
-                add_wav_as_misc(raw, song_file)
                 raw.load_data()
 
                 rows.append(
@@ -180,13 +152,3 @@ def LoadMUSIN_G(
                 )
 
     return pd.DataFrame(rows)
-
-
-if __name__ == "__main__":
-    from matplotlib import pyplot as plt
-
-    raws = LoadHassall2026()
-    raw = raws[0]
-    raw.describe()
-    raw.plot()
-    plt.show()
