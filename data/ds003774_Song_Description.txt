@@ -1,0 +1,17 @@
+The stimuli consist of 12 unrelated songs from different genres. Song information has been provided in Table. Most of the songs did not contain any lyrics, except Song 2 (English), Song 8 (Hindi), and Song 9 (Gujarati).
+
+Song No. 		Song Name-Artist			Genre			Duration(sec)		Tempo(BPM)		Duration from Song	
+1		Trip to the lonely planet- Mark Alow		Deep House		125			121.5			2:58-5:04
+2		Sail-Awolnation					Indie			114			119			0:00-1:54
+3		Concept 15- Kodomo				Electronics		132			160			0:00-2:12
+4		Aurore - Claire David				New Age			111			-			0:00-1:51
+5		Proof- Idiotape					Electronic Dance	124			124			0:00-2:04
+6		Glider- Tycho					Ambient			100			126			0:00-1:40
+7		Raag Bihag- B.Sivaramakrishna Rao		Hindustani Classical 	116			70.5			0:00-1:56
+8		Albela sajan - Ismail Darbar			Indian Semi-Classical	121			194			0:00-2:01
+9		Mor Bani Thanghat Kare - Sanjay Leela Bhansali 	Indian Folk		126			117			0:00-2:06
+10		Fallin - Dr. SaxLove 				Soft Jazz		129			197			0:00-2:09
+11		Fly Kicks - DJ Kimera				Rock			113			120			0:00-1:53
+12		JB - Nobody.one 				Prog Rock		117			145.5			0:00-1:57
+
+
