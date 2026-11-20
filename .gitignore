@@ -12,6 +12,7 @@ wheels/
 # Data
 data/*
 !data/README.md
+data_colab.zip
 
 # Notebook checkpoints
 .ipynb_checkpoints
